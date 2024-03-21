@@ -19,6 +19,8 @@ class GameWidget : public QMainWindow
 protected:
     QtMatchingGame* mainQ;
 
+    int levelNum = -1;
+
     GameModel* game;
     IconButton** buttonImage;
     QTimer* gameTimer;
@@ -29,6 +31,8 @@ protected:
     QMediaPlayer* audioPlayer;
 
     virtual void initGame();
+    void paintTiles();
+
     Ui::GameWidgetClass ui;
 
 protected slots:
@@ -48,6 +52,8 @@ private slots:
     void on_startBtn_clicked();
 
     void on_pauseBtn_clicked();
+
+    void on_shuffleBtn_clicked();
 
 private:
     void destroyButtons();

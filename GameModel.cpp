@@ -26,6 +26,7 @@ GameModel::~GameModel() {
 void GameModel::startGame() {
 	colNum = (int)(MAX_COL * levelRate[gameLevel]);
 	rowNum = (int)(MAX_ROW * levelRate[gameLevel]);
+	if ((colNum * rowNum) % 2) ++colNum;
 	tLevelNum = tRemainNum = colNum * rowNum;
 	gameMap = new int[tLevelNum] { -1 };
 	hintArr = new Point[2];
@@ -233,7 +234,7 @@ bool GameModel::canLinkWithTwoCorner(const Point& src, const Point& dst) {
 	//		p2 = std::make_pair(src.first, MAX_COL);
 	//	}
 
-	for (int x = 0; x < colNum; ++x) {
+	for (int x = -1; x < colNum; ++x) {
 		if (x != src.first && x != dst.first) {
 			p1 = std::make_pair(x, src.second);
 			p2 = std::make_pair(x, dst.second);
@@ -285,4 +286,3 @@ void GameModel::shuffle() {
 		std::swap(gameMap[i], gameMap[randomID]);
 	}
 }
-

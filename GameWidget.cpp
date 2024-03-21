@@ -9,10 +9,24 @@ const int tLeftMargin = 50;
 void GameWidget::initGame() {
     game->startGame();
     
-    int levelNum = game->getLevelNum();
-    buttonImage = new IconButton * [levelNum] {nullptr};
+    levelNum = game->getLevelNum();
+    buttonImage = new IconButton * [levelNum] { nullptr };
     for (int i = 0; i < levelNum; ++i) {
         buttonImage[i] = new IconButton(this);
+    }
+    paintTiles();
+
+    // 进度条
+
+    // 计时器
+
+    isLinking = false;
+
+    //播放音乐
+}
+
+void GameWidget::paintTiles() {
+    for (int i = 0; i < levelNum; ++i) {
         buttonImage[i]->setGeometry(tLeftMargin + (i % game->colNum) * tIconSize, tTopMargin + (i / game->colNum) * tIconSize, tIconSize, tIconSize);
         buttonImage[i]->xID = i % game->colNum;
         buttonImage[i]->yID = i / game->colNum;
@@ -31,14 +45,6 @@ void GameWidget::initGame() {
             buttonImage[i]->hide();
         }
     }
-
-    // 进度条
-
-    // 计时器
-
-    isLinking = false;
-
-    //播放音乐
 }
 
 GameWidget::GameWidget(QWidget *parent, QtMatchingGame* mainQ, GameMode mode)
@@ -51,6 +57,8 @@ GameWidget::GameWidget(QWidget *parent, QtMatchingGame* mainQ, GameMode mode)
     preIcon = curIcon = nullptr;
     isLinking = false;
     audioPlayer = nullptr;
+
+    setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
 GameWidget::~GameWidget()
@@ -60,6 +68,7 @@ GameWidget::~GameWidget()
 
 void GameWidget::closeEvent(QCloseEvent* event) {
     mainQ->show();
+    destroyButtons();
 }
 
 void GameWidget::onIconButtonPressed() {
@@ -101,10 +110,17 @@ void GameWidget::on_pauseBtn_clicked()
 
 void GameWidget::destroyButtons() {
     if (buttonImage) {
-        for (int i = 0; i < game->getLevelNum(); ++i) {
+        for (int i = 0; i < levelNum; ++i) {
             delete buttonImage[i];
         }
         delete[] buttonImage;
     }
     buttonImage = nullptr;
 }
+
+void GameWidget::on_shuffleBtn_clicked()
+{
+    game->shuffle();
+    paintTiles();
+}
+

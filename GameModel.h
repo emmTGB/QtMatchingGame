@@ -52,6 +52,8 @@ public:
 	void setGameLevel(GameLevel level);
     void setGameStatus(GameStatus status);
 
+	void shuffle();
+
 private:
 	GameLevel gameLevel;
 	GameStatus gameStatus;
@@ -69,7 +71,5 @@ private:
 	bool canLinkDirectly(const Point& src, const Point& dst);
 	bool canLinkWithOneCorner(const Point& src, const Point& dst);
 	bool canLinkWithTwoCorner(const Point& src, const Point& dst);
-
-	void shuffle();
 };
 

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QtMatchingGameClass</class>
+ <widget class="QMainWindow" name="QtMatchingGameClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>QtMatchingGame</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#centralWidget { background-image: url(:/QtMatchingGame/res/llk_main.bmp); }</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QPushButton" name="pushBasicMode">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>220</y>
+      <width>111</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(240, 206, 158);</string>
+    </property>
+    <property name="text">
+     <string>基本模式</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushEntertainMode">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>330</y>
+      <width>111</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(240, 206, 158);</string>
+    </property>
+    <property name="text">
+     <string>休闲模式</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushStageMode">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>440</y>
+      <width>111</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(240, 206, 158);</string>
+    </property>
+    <property name="text">
+     <string>关卡模式</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="QtMatchingGame.qrc"/>
+ </resources>
+ <connections/>
+</ui>

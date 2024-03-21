@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/QtMatchingGame">
+        <file>res/fruit_bg.bmp</file>
+        <file>res/fruit_element.bmp</file>
+        <file>res/fruit_mask.bmp</file>
+        <file>res/LLK.ico</file>
+        <file>res/LLK.rc2</file>
+        <file>res/llk_main.bmp</file>
+    </qresource>
+</RCC>

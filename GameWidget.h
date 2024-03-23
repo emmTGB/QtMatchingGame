@@ -7,10 +7,15 @@
 #include "IconButton.h"
 #include "GameModel.h"
 #include <QCloseEvent>
+#include "OverlayWidget.h"
 
-namespace Ui {
-class GameWidget;
-}
+const int tIconSize = 40;
+const int tTopMargin = 50;
+const int tLeftMargin = 50;
+
+const QString tDefaultStyle = "background: transparent";
+const QString tReleasedStyle = tDefaultStyle + "; ";
+const QString tClickedStyle = tDefaultStyle + ";background-color: rgba(255, 255, 12, 161);";
 
 class GameWidget : public QMainWindow
 {
@@ -29,14 +34,17 @@ protected:
     bool isLinking;
 
     QMediaPlayer* audioPlayer;
+    
+    OverlayWidget* overlay;
 
     virtual void initGame();
     void paintTiles();
+    void putOverlay();
 
     Ui::GameWidgetClass ui;
 
 protected slots:
-    void onIconButtonPressed();
+    void on_IconButton_Pressed();
     // void gameTimerEvent();
     // void handleLinkEffect();
     // void on_hintBtn_clicked();
@@ -55,8 +63,14 @@ private slots:
 
     void on_shuffleBtn_clicked();
 
+    void on_levelBtn_clicked();
+
 private:
-    void destroyButtons();
+    QPixmap tIconMap;
+
+    void loadIcons();
+    void destroyTButtons();
+    void releaseTButtons();
 };
 
 #endif // GAMEWIDGET_H

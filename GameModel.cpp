@@ -28,7 +28,9 @@ void GameModel::startGame() {
 	rowNum = (int)(MAX_ROW * levelRate[gameLevel]);
 	if ((colNum * rowNum) % 2) ++colNum;
 	tLevelNum = tRemainNum = colNum * rowNum;
+	if (gameMap) delete gameMap;
 	gameMap = new int[tLevelNum] { -1 };
+	if (hintArr) delete hintArr;
 	hintArr = new Point[2];
 	for (int i = 0; i < 2; i++) {
 		hintArr[i].first = 0;
@@ -48,7 +50,6 @@ void GameModel::startGame() {
 
 	frozened = false;
 	paintPoints.clear();
-
 }
 
 int* GameModel::getGameMap() {
@@ -59,10 +60,15 @@ GameStatus GameModel::checkGameStatus() {
 	return gameStatus;
 }
 
+GameLevel GameModel::checkGameLevel() {
+	return gameLevel;
+}
+
 bool GameModel::linkTwoTiles(Point& src, Point& dst) {
 	if (isCanLink(src, dst)) {
 		gameMap[colNum * src.second + src.first] = -1;
 		gameMap[colNum * dst.second + dst.first] = -1;
+		tRemainNum -= 2;
 		return true;
 	}
 	return false;

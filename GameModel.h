@@ -1,10 +1,12 @@
 #pragma once
 #include<vector>
 
+#include "Global.h"
+
 const int MAX_COL = 16;
 const int MAX_ROW = 16;
 
-const int MAX_ICON = 20;
+const int MAX_ICON = 10;
 
 enum GameStatus {
 	WAITING,
@@ -27,8 +29,6 @@ enum GameMode {
 	STAGE
 };
 
-typedef std::pair<int, int> Point;
-
 class GameModel {
 public:
 	GameModel(GameMode mode = GameMode::BASIC);
@@ -41,6 +41,7 @@ public:
 	void startGame();
 	int* getGameMap();
 	GameStatus checkGameStatus();
+	GameLevel checkGameLevel();
 	bool linkTwoTiles(Point& src, Point& dst);
 	bool isFrozen();
 	bool isWin();

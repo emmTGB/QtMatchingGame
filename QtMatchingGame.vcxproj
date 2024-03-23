@@ -96,18 +96,26 @@
   <ItemGroup>
     <QtRcc Include="QtMatchingGame.qrc" />
     <QtUic Include="GameWidget.ui" />
+    <QtUic Include="LevelSelectDialog.ui" />
     <QtUic Include="QtMatchingGame.ui" />
     <QtMoc Include="QtMatchingGame.h" />
     <ClCompile Include="BasicModeGame.cpp" />
+    <ClCompile Include="EntertainModeGame.cpp" />
     <ClCompile Include="GameModel.cpp" />
     <ClCompile Include="GameWidget.cpp" />
     <ClCompile Include="IconButton.cpp" />
+    <ClCompile Include="LevelSelectDialog.cpp" />
+    <ClCompile Include="OverlayWidget.cpp" />
     <ClCompile Include="QtMatchingGame.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicModeGame.h" />
+    <ClInclude Include="EntertainModeGame.h" />
     <ClInclude Include="GameModel.h" />
+    <ClInclude Include="Global.h" />
+    <QtMoc Include="OverlayWidget.h" />
+    <QtMoc Include="LevelSelectDialog.h" />
     <QtMoc Include="GameWidget.h" />
     <QtMoc Include="IconButton.h" />
   </ItemGroup>

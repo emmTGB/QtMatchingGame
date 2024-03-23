@@ -1,7 +1,8 @@
 #pragma once
 
-#include<qpushbutton.h>
+#include <qpushbutton.h>
 #include <QtWidgets\QMainWindow>
+#include "Global.h"
 
 class IconButton :
     public QPushButton {
@@ -10,11 +11,13 @@ class IconButton :
 public:
     IconButton(QMainWindow* parent = Q_NULLPTR) :
         QPushButton(parent),
-        xID(-1),
-        yID(-1),
         imageID(-1) {
     }
-    int xID, yID;
+
+    void setPos(const Point& pos);
+    void setPos(int x, int y);
+
     int imageID;
+    Point posID;
 };
 

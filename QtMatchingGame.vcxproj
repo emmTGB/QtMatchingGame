@@ -105,7 +105,6 @@
     <ClCompile Include="GameWidget.cpp" />
     <ClCompile Include="IconButton.cpp" />
     <ClCompile Include="LevelSelectDialog.cpp" />
-    <ClCompile Include="OverlayWidget.cpp" />
     <ClCompile Include="QtMatchingGame.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -114,7 +113,6 @@
     <ClInclude Include="EntertainModeGame.h" />
     <ClInclude Include="GameModel.h" />
     <ClInclude Include="Global.h" />
-    <QtMoc Include="OverlayWidget.h" />
     <QtMoc Include="LevelSelectDialog.h" />
     <QtMoc Include="GameWidget.h" />
     <QtMoc Include="IconButton.h" />

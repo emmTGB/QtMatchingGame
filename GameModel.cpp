@@ -8,6 +8,8 @@ GameModel::GameModel(GameMode mode):
 {
 	gameMap = nullptr;
 	tLevelNum = tRemainNum = 0;
+	score = 0;
+	combo = 0;
 	colNum = 0;
 	rowNum = 0;
 	frozened = false;
@@ -52,10 +54,6 @@ void GameModel::startGame() {
 	paintPoints.clear();
 }
 
-int* GameModel::getGameMap() {
-	return gameMap;
-}
-
 GameStatus GameModel::checkGameStatus() {
 	return gameStatus;
 }
@@ -69,22 +67,23 @@ bool GameModel::linkTwoTiles(Point& src, Point& dst) {
 		gameMap[colNum * src.second + src.first] = -1;
 		gameMap[colNum * dst.second + dst.first] = -1;
 		tRemainNum -= 2;
+		score += LINK_SCORE * (1 + std::min(MAX_RATE, COMBO_RATE * combo));
+		combo++;
 		return true;
 	}
+	combo = 0;
 	return false;
 }
 
-bool GameModel::isFrozen() {
+bool GameModel::checkFrozen() {
 	if (!tLevelNum)
 		return true;
 	for (int i = 0; i < tLevelNum; ++i) {
 		for (int j = 0; j < tLevelNum; ++j) {
 			Point src(i % colNum, i / colNum), dst(j % colNum, j / colNum);
 
-			frozened = true;
 			if (isCanLink(src, dst)) {
-				hintArr[0] = src;
-				hintArr[1] = dst;
+				hintArr = new Point[2]{ src, dst };
 
 				frozened = false;
 
@@ -93,6 +92,7 @@ bool GameModel::isFrozen() {
 		}
 	}
 
+	hintArr = nullptr;
 	frozened = true;
 
 	return true;
@@ -102,8 +102,18 @@ bool GameModel::isWin() {
 	return tRemainNum == 0;
 }
 
-Point* GameModel::getHint() {
-	return hintArr;
+bool GameModel::isFrozen() {
+	return frozened;
+}
+
+int* GameModel::getHint() {
+	if (hintArr) {
+		return new int[2] {hintArr[0].first + colNum * hintArr[0].second,
+			hintArr[1].first + colNum * hintArr[1].second};
+	}
+	else {
+		return nullptr;
+	}
 }
 
 int GameModel::getIdAt(int i) {
@@ -188,15 +198,16 @@ bool GameModel::canLinkDirectly(const Point& src, const Point& dst) {
 bool GameModel::canLinkWithOneCorner(const Point& src, const Point& dst) {
 	Point cornerPoint1(dst.first, src.second), cornerPoint2(src.first, dst.second);
 
-	if (gameMap[cornerPoint1.first + cornerPoint1.second * colNum] == -1 
+	if (gameMap[dst.first + src.second * colNum] == -1 
 		&& canLinkDirectly(src, cornerPoint1) 
 		&& canLinkDirectly(dst, cornerPoint1)) {
 		if (!frozened) {
 			paintPoints.clear();
 			paintPoints.push_back(src);
-			paintPoints.push_back(dst);
 			paintPoints.push_back(cornerPoint1);
+			paintPoints.push_back(dst);
 		}
+		return true;
 	}
 	if (gameMap[cornerPoint2.first + cornerPoint2.second * colNum] == -1
 		&& canLinkDirectly(src, cornerPoint2) 
@@ -204,17 +215,73 @@ bool GameModel::canLinkWithOneCorner(const Point& src, const Point& dst) {
 		if (!frozened) {
 			paintPoints.clear();
 			paintPoints.push_back(src);
-			paintPoints.push_back(dst);
 			paintPoints.push_back(cornerPoint2);
+			paintPoints.push_back(dst);
 		}
+		return true;
 	}
 
 	return false;
 }
 
-bool GameModel::canLinkWithTwoCorner(const Point& src, const Point& dst) {
-	Point p1, p2;
+bool GameModel::_twoCornerX(const Point& src, const Point& dst, int x) {
+	if (x != src.first && x != dst.first) {
+		Point p1 = std::make_pair(x, src.second);
+		Point p2 = std::make_pair(x, dst.second);
+		bool flag = false;
+		if (x == -1 || x == colNum) {
+			if (canLinkDirectly(src, p1) && canLinkDirectly(p2, dst))
+				flag = true;
+		}
+		else if (gameMap[x + colNum * src.second] == -1
+			&& gameMap[x + colNum * dst.second] == -1
+			&& canLinkDirectly(src, p1)
+			&& canLinkDirectly(p1, p2)
+			&& canLinkDirectly(p2, dst)) {
+			flag = true;
+		}
+		if (flag && !frozened) {
+			paintPoints.clear();
+			paintPoints.push_back(src);
+			paintPoints.push_back(p1);
+			paintPoints.push_back(p2);
+			paintPoints.push_back(dst);
+			return true;
+		}
+	}
+	return false;
+}
 
+bool GameModel::_twoCornerY(const Point& src, const Point& dst, int y) {
+	if (y != src.second && y != dst.second) {
+		Point p1 = std::make_pair(src.first, y);
+		Point p2 = std::make_pair(dst.first, y);
+		
+		bool flag = false;
+		if (y == -1 || y == rowNum) {
+			if (canLinkDirectly(src, p1) && canLinkDirectly(p2, dst))
+				flag = true;
+		}
+		else if (gameMap[src.first + colNum * y] == -1
+			&& gameMap[dst.first + colNum * y] == -1
+			&& canLinkDirectly(src, p1)
+			&& canLinkDirectly(p1, p2)
+			&& canLinkDirectly(p2, dst)) {
+			flag = true;
+		}
+		if (flag && !frozened) {
+			paintPoints.clear();
+			paintPoints.push_back(src);
+			paintPoints.push_back(p1);
+			paintPoints.push_back(p2);
+			paintPoints.push_back(dst);
+			return true;
+		}
+	}
+	return false;
+}
+
+bool GameModel::canLinkWithTwoCorner(const Point& src, const Point& dst) {
 	//if((src.first == 0 || (canLinkDirectly(src, std::make_pair(-1, src.second))))
 	//	&& dst.first == 0 || (canLinkDirectly(dst, std::make_pair(-1, dst.second))))
 	//	if (!frozened) {
@@ -240,47 +307,31 @@ bool GameModel::canLinkWithTwoCorner(const Point& src, const Point& dst) {
 	//		p2 = std::make_pair(src.first, MAX_COL);
 	//	}
 
-	for (int x = -1; x < colNum; ++x) {
-		if (x != src.first && x != dst.first) {
-			p1 = std::make_pair(x, src.second);
-			p2 = std::make_pair(x, dst.second);
-			if (((x == -1 || x == colNum) && (canLinkDirectly(src, p1) && canLinkDirectly(p2, dst)))
-				|| (gameMap[x + colNum * src.second] == -1
-					&& canLinkDirectly(src, p1)
-					&& canLinkDirectly(p1, p2)
-					&& canLinkDirectly(p2, dst))) {
-				if(!frozened) {
-					paintPoints.clear();
-					paintPoints.push_back(src);
-					paintPoints.push_back(p1);
-					paintPoints.push_back(p2);
-					paintPoints.push_back(dst);
-				}
-				return true;
-			}
-		}
-	}
+	int leftX = std::min(src.first, dst.first);
+	int rightX = std::max(src.first, dst.first);
 
-	for (int y = -1; y <= rowNum; ++y) {
-		if (y != src.second && y != dst.second) {
-			p1 = std::make_pair(src.first, y);
-			p2 = std::make_pair(dst.first, y);
-			if (((y == -1 || y == colNum) && (canLinkDirectly(src, p1)) && (canLinkDirectly(p2, dst)))
-				|| (gameMap[src.first + colNum * y] == -1
-					&& canLinkDirectly(src, p1)
-					&& canLinkDirectly(p1, p2)
-					&& canLinkDirectly(p2, dst))) {
-				if (!frozened) {
-					paintPoints.clear();
-					paintPoints.push_back(src);
-					paintPoints.push_back(p1);
-					paintPoints.push_back(p2);
-					paintPoints.push_back(dst);
-				}
-				return true;
-			}
-		}
-	}
+	for (int x = leftX + 1; x < rightX; x++)
+		if (_twoCornerX(src, dst, x))
+			return true;
+	for (int x = leftX - 1; x >= -1; x--)
+		if (_twoCornerX(src, dst, x))
+			return true;
+	for (int x = rightX + 1; x <= colNum; x++)
+		if (_twoCornerX(src, dst, x))
+			return true;
+
+	int topY = std::min(src.second, dst.second);
+	int bottomY = std::max(src.second, dst.second);
+
+	for (int y = topY + 1; y < bottomY; y++)
+		if (_twoCornerY(src, dst, y))
+			return true;
+	for (int y = topY - 1; y >= -1; y--)
+		if (_twoCornerY(src, dst, y))
+			return true;
+	for (int y = bottomY + 1; y <= rowNum; y++)
+		if (_twoCornerY(src, dst, y))
+			return true;
 
 	return false;
 }

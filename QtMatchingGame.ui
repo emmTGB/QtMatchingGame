@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QtMatchingGame</string>
+   <string>连连看</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="QtMatchingGame.qrc">
+    <normaloff>:/QtMatchingGame/res/LLK.ico</normaloff>:/QtMatchingGame/res/LLK.ico</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">#centralWidget { background-image: url(:/QtMatchingGame/res/llk_main.bmp); }</string>

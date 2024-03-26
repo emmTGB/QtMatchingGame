@@ -9,6 +9,7 @@ QtMatchingGame::QtMatchingGame(QWidget *parent)
     setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint);
     setFixedWidth(this->width());
     setFixedHeight(this->height());
+    
 }
 
 QtMatchingGame::~QtMatchingGame()

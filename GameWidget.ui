@@ -13,8 +13,14 @@
   <property name="windowTitle">
    <string>GameWidget</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="QtMatchingGame.qrc">
+    <normaloff>:/QtMatchingGame/res/LLK.ico</normaloff>:/QtMatchingGame/res/LLK.ico</iconset>
+  </property>
   <property name="styleSheet">
-   <string notr="true">#centralWidget{background-image: url(:/QtMatchingGame/res/fruit_bg.bmp);}</string>
+   <string notr="true">#centralWidget{
+border-image: url(:/QtMatchingGame/res/fruit_bg.bmp);
+}</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout" columnstretch="20,1,1">
@@ -273,6 +279,8 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="QtMatchingGame.qrc"/>
+ </resources>
  <connections/>
 </ui>

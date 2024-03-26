@@ -58,9 +58,6 @@
     <ClCompile Include="EntertainModeGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OverlayWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="IconButton.h">
@@ -70,9 +67,6 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="LevelSelectDialog.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="OverlayWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

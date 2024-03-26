@@ -77,6 +77,8 @@ private:
     void loadIcons();
     void destroyTButtons();
     void releaseTButtons();
+
+    void paintLine();
 };
 
 #endif // GAMEWIDGET_H

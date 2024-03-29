@@ -7,6 +7,7 @@ GameModel::GameModel(GameMode mode):
     gameMode(mode)
 {
 	gameMap = nullptr;
+	iconSpecies = 0;
 	tLevelNum = tRemainNum = 0;
 	score = 0;
 	combo = 0;
@@ -40,12 +41,13 @@ void GameModel::startGame() {
 	}
 
 	gameStatus = PLAYING;
+	iconSpecies = getIconSpecies();
 
 	int iconID = 0;
 	for (int i = 0; i + 1 < tLevelNum; i += 2) {
 		gameMap[i] = iconID;
 		gameMap[i + 1] = iconID;
-		iconID = ++iconID % MAX_ICON;
+		iconID = ++iconID % iconSpecies;
 	}
 
 	shuffle();
@@ -85,7 +87,7 @@ bool GameModel::__checkFrozen() {
 	if (!tLevelNum)
 		return true;
 	for (int i = 0; i < tLevelNum; ++i) {
-		for (int j = 0; j < tLevelNum; ++j) {
+		for (int j = i; j < tLevelNum; ++j) {
 			Point src(i % colNum, i / colNum), dst(j % colNum, j / colNum);
 
 			if (isCanLink(src, dst)) {
@@ -287,30 +289,6 @@ bool GameModel::_twoCornerY(const Point& src, const Point& dst, int y) {
 }
 
 bool GameModel::canLinkWithTwoCorner(const Point& src, const Point& dst) {
-	//if((src.first == 0 || (canLinkDirectly(src, std::make_pair(-1, src.second))))
-	//	&& dst.first == 0 || (canLinkDirectly(dst, std::make_pair(-1, dst.second))))
-	//	if (!frozened) {
-	//		p1 = std::make_pair(-1, src.second);
-	//		p2 = std::make_pair(-1, dst.second);
-	//	}
-	//if((src.first == MAX_COL - 1 || (canLinkDirectly(src, std::make_pair(MAX_COL, src.second))))
-	//	&& dst.first == MAX_COL - 1 || (canLinkDirectly(dst, std::make_pair(MAX_COL, dst.second))))
-	//	if (!frozened) {
-	//		p1 = std::make_pair(MAX_COL, src.second);
-	//		p2 = std::make_pair(MAX_COL, dst.second);
-	//	}
-	//if((src.second == 0 || (canLinkDirectly(src, std::make_pair(src.first, -1))))
-	//	&& dst.second == 0 || (canLinkDirectly(dst, std::make_pair(dst.first, -1))))
-	//	if (!frozened) {
-	//		p1 = std::make_pair(src.first, -1);
-	//		p2 = std::make_pair(src.first, -1);
-	//	}
-	//if((src.second == MAX_COL - 1 || (canLinkDirectly(src, std::make_pair(src.first, MAX_COL))))
-	//	&& dst.second == MAX_COL - 1 || (canLinkDirectly(dst, std::make_pair(dst.first, MAX_COL))))
-	//	if (!frozened) {
-	//		p1 = std::make_pair(src.first, MAX_COL);
-	//		p2 = std::make_pair(src.first, MAX_COL);
-	//	}
 
 	int leftX = std::min(src.first, dst.first);
 	int rightX = std::max(src.first, dst.first);
@@ -346,5 +324,14 @@ void GameModel::shuffle() {
 	for (int i = 0; i < tLevelNum; ++i) {
 		int randomID = rand() % tLevelNum;
 		std::swap(gameMap[i], gameMap[randomID]);
+	}
+}
+
+void GameModel::adapt() {
+	if (getIconSpecies() < iconSpecies) {
+		iconSpecies = getIconSpecies();
+		for (int i = 0; i < tLevelNum; ++i) {
+			gameMap[i] %= iconSpecies;
+		}
 	}
 }

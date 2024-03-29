@@ -95,6 +95,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <QtRcc Include="QtMatchingGame.qrc" />
+    <QtUic Include="GameSettingsDialog.ui" />
     <QtUic Include="GameWidget.ui" />
     <QtUic Include="LevelSelectDialog.ui" />
     <QtUic Include="QtMatchingGame.ui" />
@@ -102,6 +103,8 @@
     <ClCompile Include="BasicModeGame.cpp" />
     <ClCompile Include="EntertainModeGame.cpp" />
     <ClCompile Include="GameModel.cpp" />
+    <ClCompile Include="GameSettingsDialog.cpp" />
+    <ClCompile Include="GameTheme.cpp" />
     <ClCompile Include="GameWidget.cpp" />
     <ClCompile Include="IconButton.cpp" />
     <ClCompile Include="LevelSelectDialog.cpp" />
@@ -112,6 +115,8 @@
     <ClInclude Include="BasicModeGame.h" />
     <ClInclude Include="EntertainModeGame.h" />
     <ClInclude Include="GameModel.h" />
+    <QtMoc Include="GameSettingsDialog.h" />
+    <ClInclude Include="GameTheme.h" />
     <ClInclude Include="Global.h" />
     <QtMoc Include="LevelSelectDialog.h" />
     <QtMoc Include="GameWidget.h" />

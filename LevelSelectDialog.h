@@ -18,6 +18,7 @@ private slots:
 
 private:
 	int res = 0;
+	QButtonGroup* block;
 
 	Ui::LevelSelectDialogClass ui;
 };

@@ -1,5 +1,6 @@
 ﻿#include "gamewidget.h"
 #include "LevelSelectDialog.h"
+#include "GameSettingsDialog.h"
 
 #include <QPainter>
 #include<qtimer.h>
@@ -72,6 +73,11 @@ GameWidget::GameWidget(QWidget *parent, QtMatchingGame* mainQ, GameMode mode)
 {
     ui.setupUi(this);
     ui.centralWidget->installEventFilter(this);
+    ui.centralWidget->setStyleSheet("#centralWidget{border-image: url("
+        + getBackground()
+        + ");}");
+    this->setMinimumWidth(800);
+    this->setMinimumHeight(600);
 
     game = new GameModel(mode);
     buttonImage = nullptr;
@@ -150,14 +156,7 @@ void GameWidget::on_IconButton_Pressed() {
                 update();
                 isLinking = true;
 
-                QTimer::singleShot(tLinkingTimerDelay, this, SLOT(handleLinkEffect()));
-            
-                if (game->isWin()) {
-                    ui.startBtn->setEnabled(true);
-                    ui.pauseBtn->setEnabled(false);
-                    ui.hintBtn->setEnabled(false);
-                    ui.shuffleBtn->setEnabled(false);
-                }
+                QTimer::singleShot(tLinkingTimerDelay, this, SLOT(afterLink()));
             }
             else {
                 curIcon->setStyleSheet(tReleasedStyle);
@@ -189,7 +188,8 @@ void GameWidget::on_startBtn_clicked()
     ui.pauseBtn->setEnabled(true);
     ui.shuffleBtn->setEnabled(true);
     ui.hintBtn->setEnabled(true);
-    
+    ui.showWidget->setStyleSheet("");
+
     enableIconButtons();
 }
 
@@ -201,6 +201,8 @@ void GameWidget::on_pauseBtn_clicked()
         ui.pauseBtn->setText("继续游戏");
         ui.levelBtn->setEnabled(true);
         ui.startBtn->setEnabled(true);
+        ui.shuffleBtn->setEnabled(false);
+        ui.hintBtn->setEnabled(false);
         disableIconButtons();
         break;
     case PAUSE:
@@ -208,6 +210,8 @@ void GameWidget::on_pauseBtn_clicked()
         ui.pauseBtn->setText("暂停游戏");
         ui.levelBtn->setEnabled(false);
         ui.startBtn->setEnabled(false);
+        ui.shuffleBtn->setEnabled(true);
+        ui.hintBtn->setEnabled(true);
         enableIconButtons();
         break;
     default:
@@ -234,7 +238,7 @@ void GameWidget::releaseTButtons() {
     isLinking = false;
 }
 
-void GameWidget::handleLinkEffect() {
+void GameWidget::afterLink() {
     game->checkFrozen();
     preIcon->setStyleSheet(tReleasedStyle);
     curIcon->setStyleSheet(tReleasedStyle);
@@ -242,7 +246,18 @@ void GameWidget::handleLinkEffect() {
     curIcon->hide();
     preIcon = curIcon = nullptr;
 
-    update();
+    update(); 
+    if (game->isWin()) {
+        ui.startBtn->setEnabled(true);
+        ui.pauseBtn->setEnabled(false);
+        ui.hintBtn->setEnabled(false);
+        ui.shuffleBtn->setEnabled(false);
+        ui.showWidget->setStyleSheet("#showWidget{border-image:url("
+            + WIN_PIC
+            + ");}");
+
+        QMessageBox::information(this, "great", "you win");
+    }
 
     isLinking = false;
 }
@@ -282,8 +297,8 @@ void GameWidget::on_levelBtn_clicked()
 
 void GameWidget::loadIcons() {
     QImage iconEle, iconMsk;
-    iconEle.load(":/QtMatchingGame/res/fruit_element.bmp");
-    iconMsk.load(":/QtMatchingGame/res/fruit_mask.bmp");
+    iconEle.load(getIconElements());
+    iconMsk.load(getIconMasks());
     
     iconEle.convertToFormat(QImage::Format_ARGB32_Premultiplied);
     iconEle.setAlphaChannel(iconMsk);
@@ -308,3 +323,20 @@ void GameWidget::on_hintBtn_clicked()
     }
 }
 
+void GameWidget::on_pushButton_clicked()
+{
+    GameSettingsDialog* gsd = new GameSettingsDialog(this);
+    int ref = gsd->exec();
+    if (ref == QDialog::Accepted) {
+        if (gsd->getRes() != theme) {
+            theme = gsd->getRes();
+            ui.centralWidget->setStyleSheet("#centralWidget{border-image: url("
+                + getBackground()
+                + ");}");
+            game->adapt();
+            loadIcons();
+            paintTiles();
+        }
+    }
+    delete gsd;
+}

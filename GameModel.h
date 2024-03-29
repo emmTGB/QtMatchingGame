@@ -2,11 +2,10 @@
 #include<vector>
 
 #include "Global.h"
+#include "GameTheme.h"
 
-const int MAX_COL = 16;
+const int MAX_COL = 18;
 const int MAX_ROW = 16;
-
-const int MAX_ICON = 10;
 
 const int LINK_SCORE = 50;
 const double MAX_RATE = 0.3;
@@ -25,7 +24,7 @@ enum GameLevel {
 	NORMAL,
 	HARD
 };
-const double levelRate[] = { 0.3, 0.5, 1.0 };
+const double levelRate[] = { 0.3, 0.5, 0.8 };
 
 enum GameMode {
 	BASIC,
@@ -59,11 +58,14 @@ public:
 
 	void shuffle();
 
+	void adapt();
+
 private:
 	GameLevel gameLevel;
 	GameStatus gameStatus;
 	GameMode gameMode;
 
+	int iconSpecies;
 	int tLevelNum;
 	int tRemainNum;
 	int score;
@@ -84,4 +86,3 @@ private:
 	bool _twoCornerX(const Point& src, const Point& dst, int x);
 	bool _twoCornerY(const Point& src, const Point& dst, int y);
 };
-

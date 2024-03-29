@@ -7,7 +7,7 @@ LevelSelectDialog::LevelSelectDialog(QWidget *parent, int curId)
 {
 	ui.setupUi(this);
 	
-	QButtonGroup* block = new QButtonGroup(this);
+	block = new QButtonGroup(this);
 	block->addButton(ui.rEasy, 0);
 	block->addButton(ui.rNormal, 1);
 	block->addButton(ui.rHard, 2);
@@ -30,7 +30,9 @@ LevelSelectDialog::LevelSelectDialog(QWidget *parent, int curId)
 }
 
 LevelSelectDialog::~LevelSelectDialog()
-{}
+{
+	delete block;
+}
 
 int LevelSelectDialog::getRes() {
 	return res;
@@ -39,5 +41,3 @@ int LevelSelectDialog::getRes() {
 void LevelSelectDialog::handleRadio(int i) {
 	res = i;
 }
-
-

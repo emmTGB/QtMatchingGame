@@ -6,5 +6,12 @@
         <file>res/LLK.ico</file>
         <file>res/LLK.rc2</file>
         <file>res/llk_main.bmp</file>
+        <file>res/cxk_bg.bmp</file>
+        <file>res/cxk_element.bmp</file>
+        <file>res/cxk_mask.bmp</file>
+        <file>res/mh_bg.bmp</file>
+        <file>res/mh_element.bmp</file>
+        <file>res/mh_mask.bmp</file>
+        <file>res/game_win.png</file>
     </qresource>
 </RCC>

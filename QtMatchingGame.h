@@ -4,6 +4,8 @@
 #include "ui_QtMatchingGame.h"
 #include <qmediaplayer.h>
 
+#include "GameTheme.h"
+
 class QtMatchingGame : public QMainWindow
 {
     Q_OBJECT

@@ -48,7 +48,7 @@ protected:
 
 protected slots:
     void on_IconButton_Pressed();
-    void handleLinkEffect();
+    void afterLink();
     // void gameTimerEvent();
     // void handleLinkEffect();
     // void on_hintBtn_clicked();
@@ -71,14 +71,14 @@ private slots:
 
     void on_hintBtn_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     QPixmap tIconMap;
 
     void loadIcons();
     void destroyTButtons();
     void releaseTButtons();
-
-    void paintLine();
 };
 
 #endif // GAMEWIDGET_H

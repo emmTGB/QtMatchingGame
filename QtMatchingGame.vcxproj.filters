@@ -43,12 +43,6 @@
     <ClCompile Include="GameModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="IconButton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameWidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BasicModeGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -56,6 +50,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="EntertainModeGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IconButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTheme.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSettingsDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -69,12 +75,18 @@
     <QtMoc Include="LevelSelectDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="GameSettingsDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="GameWidget.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="LevelSelectDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="GameSettingsDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -89,6 +101,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EntertainModeGame.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTheme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

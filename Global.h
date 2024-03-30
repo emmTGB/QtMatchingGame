@@ -19,3 +19,14 @@ const QString ELE_MHW = ":/QtMatchingGame/res/mh_element.bmp";
 const QString MSK_MHW = ":/QtMatchingGame/res/mh_mask.bmp";
 
 const QString WIN_PIC = ":/QtMatchingGame/res/game_win.png";
+
+const QString CLK_CXK = "qrc:/QtMatchingGame/res/cxk_click.wav";
+const QString CLR_CXK = "qrc:/QtMatchingGame/res/cxk_clear.wav";
+const QString CLK_FRT = "qrc:/QtMatchingGame/res/fruit_click.wav";
+const QString CLR_FRT = "qrc:/QtMatchingGame/res/fruit_clear.wav";
+const QString CLK_MHW = "qrc:/QtMatchingGame/res/mh_click.wav";
+const QString CLR_MHW = "qrc:/QtMatchingGame/res/mh_clear.wav";
+
+const QString BGM_CXK = "qrc:/QtMatchingGame/res/cxk_bgm.mp3";
+const QString BGM_FRT = "qrc:/QtMatchingGame/res/fruit_bgm.mp3";
+const QString BGM_MHW = "qrc:/QtMatchingGame/res/mh_bgm.mp3";

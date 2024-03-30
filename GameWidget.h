@@ -7,9 +7,10 @@
 #include "IconButton.h"
 #include "GameModel.h"
 #include <QCloseEvent>
+#include <QAudioOutput>
 
 const int tIconSize = 40;
-const int tTopMargin = 50;
+const int tTopMargin = 70;
 const int tLeftMargin = 50;
 
 const QString tDefaultStyle = "background: transparent";
@@ -18,6 +19,9 @@ const QString tClickedStyle = tDefaultStyle + ";background-color: rgba(255, 255,
 const QString tHintStyle = tDefaultStyle + "; background-color: rgba(128, 0, 255, 96);";
 
 const int tLinkingTimerDelay = 700;
+
+const int gameTimerTotal = 5 * 60 * 1000;
+const int gameTimerInterval = 300;
 
 class GameWidget : public QMainWindow
 {
@@ -30,29 +34,39 @@ protected:
 
     GameModel* game;
     IconButton** buttonImage;
-    QTimer* gameTimer;
     
     IconButton* preIcon, * curIcon;
+    QColor* curLineColor;
     bool isLinking;
+    bool enableTimer;
 
     QMediaPlayer* audioPlayer;
 
     virtual void initGame();
+    void pauseGame();
+    void continueGame();
+    void endGame(GameStatus status);
+
     void paintTiles();
     void enableIconButtons();
     void disableIconButtons();
     //void paintEvent(QPaintEvent* event)Q_DECL_OVERRIDE;
     bool eventFilter(QObject* watched, QEvent* event) Q_DECL_OVERRIDE;
 
+    void playBGM();
+    void stopBGM();
+    void playClkEfe();
+    void playClrEfe();
+
+    void startTimer();
+    void pauseTimer();
+
     Ui::GameWidgetClass ui;
 
 protected slots:
     void on_IconButton_Pressed();
     void afterLink();
-    // void gameTimerEvent();
-    // void handleLinkEffect();
-    // void on_hintBtn_clicked();
-    // void on_robotBtn_clicked();
+    void gameTimerEvent();
 
 public:
     explicit GameWidget(QWidget *parent = nullptr, QtMatchingGame* mainQ = nullptr, GameMode mode = BASIC);
@@ -71,10 +85,13 @@ private slots:
 
     void on_hintBtn_clicked();
 
-    void on_pushButton_clicked();
+    void on_settingsBtn_clicked();
 
 private:
     QPixmap tIconMap;
+    QMediaPlayer* bgmPlayer, * effectPlayer;
+    QAudioOutput* bgmOutput, * effectOutput;
+    QTimer* gameTimer;
 
     void loadIcons();
     void destroyTButtons();

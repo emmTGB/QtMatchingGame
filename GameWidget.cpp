@@ -6,6 +6,68 @@
 #include<qtimer.h>
 #include <QMessageBox>
 
+GameWidget::GameWidget(QWidget *parent, QtMatchingGame* mainQ, GameMode mode)
+    : QMainWindow(parent), mainQ(mainQ)
+{
+    ui.setupUi(this);
+    ui.centralWidget->installEventFilter(this);
+    ui.centralWidget->setStyleSheet("#centralWidget{border-image: url("
+        + getBackground()
+        + ");}");
+    this->setMinimumWidth(800);
+    this->setMinimumHeight(600);
+
+    game = new GameModel(mode);
+    buttonImage = nullptr;
+    preIcon = curIcon = nullptr;
+    curLineColor = nullptr;
+    isLinking = false;
+    enableTimer = true;
+
+    ui.startBtn->setEnabled(true);
+    ui.pauseBtn->setEnabled(false);
+    ui.hintBtn->setEnabled(false);
+    ui.shuffleBtn->setEnabled(false);
+    ui.levelBtn->setEnabled(true);
+    ui.diyButton_1->setEnabled(false);
+
+    ui.timerBar->setMaximum(gameTimerTotal);
+    ui.timerBar->setMinimum(0);
+    ui.timerBar->setValue(gameTimerTotal);
+
+    bgmOutput = new QAudioOutput(this);
+    bgmOutput->setVolume(0.15); 
+    effectOutput = new QAudioOutput(this);
+    effectOutput->setVolume(0.5);
+
+    bgmPlayer = new QMediaPlayer(this);
+    bgmPlayer->setAudioOutput(bgmOutput);
+    bgmPlayer->setLoops(-1);
+
+    effectPlayer = new QMediaPlayer(this);
+    effectPlayer->setAudioOutput(effectOutput);
+    effectPlayer->setLoops(1);
+
+    gameTimer = new QTimer(this);
+    gameTimer->setInterval(gameTimerInterval);
+    connect(gameTimer, SIGNAL(timeout()), this, SLOT(gameTimerEvent()));
+
+    loadIcons();
+
+    setAttribute(Qt::WA_DeleteOnClose, true);
+}
+
+GameWidget::~GameWidget()
+{
+    destroyTButtons();
+    delete game;
+}
+
+void GameWidget::closeEvent(QCloseEvent* event) {
+    mainQ->show();
+    destroyTButtons();
+}
+
 void GameWidget::initGame() {
     game->startGame();
     
@@ -22,12 +84,55 @@ void GameWidget::initGame() {
     paintTiles();
 
     // 进度条
-
     // 计时器
+    if (enableTimer) {
+        ui.timerBar->setValue(gameTimerTotal);
+        startTimer();
+    }
+
+    playBGM();
 
     isLinking = false;
+}
 
-    //播放音乐
+void GameWidget::pauseGame() {
+    if (game->checkGameStatus() > PAUSE)
+        return;
+    game->setGameStatus(PAUSE);
+    ui.pauseBtn->setText("继续游戏");
+    ui.levelBtn->setEnabled(true);
+    ui.startBtn->setEnabled(true);
+    ui.shuffleBtn->setEnabled(false);
+    ui.hintBtn->setEnabled(false);
+    disableIconButtons();
+    if (enableTimer)
+        pauseTimer();
+}
+
+void GameWidget::continueGame() {
+    game->setGameStatus(PLAYING);
+    ui.pauseBtn->setText("暂停游戏");
+    ui.levelBtn->setEnabled(false);
+    ui.startBtn->setEnabled(false);
+    ui.shuffleBtn->setEnabled(true);
+    ui.hintBtn->setEnabled(true);
+    enableIconButtons();
+    if (enableTimer)
+        startTimer();
+}
+
+void GameWidget::endGame(GameStatus status) {
+    game->setGameStatus(status);
+    ui.startBtn->setEnabled(true);
+    ui.pauseBtn->setEnabled(false);
+    ui.hintBtn->setEnabled(false);
+    ui.shuffleBtn->setEnabled(false);
+    disableIconButtons();
+    stopBGM();
+    if (enableTimer)
+        pauseTimer();
+
+    game->settleScore(ui.timerBar->value());
 }
 
 void GameWidget::paintTiles() {
@@ -68,74 +173,94 @@ void GameWidget::disableIconButtons() {
         buttonImage[i]->setEnabled(false);
 }
 
-GameWidget::GameWidget(QWidget *parent, QtMatchingGame* mainQ, GameMode mode)
-    : QMainWindow(parent), mainQ(mainQ)
-{
-    ui.setupUi(this);
-    ui.centralWidget->installEventFilter(this);
-    ui.centralWidget->setStyleSheet("#centralWidget{border-image: url("
-        + getBackground()
-        + ");}");
-    this->setMinimumWidth(800);
-    this->setMinimumHeight(600);
-
-    game = new GameModel(mode);
-    buttonImage = nullptr;
-    gameTimer = nullptr;
-    preIcon = curIcon = nullptr;
-    isLinking = false;
-    audioPlayer = nullptr;
-
-    ui.startBtn->setEnabled(true);
-    ui.pauseBtn->setEnabled(false);
-    ui.hintBtn->setEnabled(false);
-    ui.shuffleBtn->setEnabled(false);
-    ui.levelBtn->setEnabled(true);
-    ui.diyButton_1->setEnabled(false);
-
-    loadIcons();
-
-    setAttribute(Qt::WA_DeleteOnClose, true);
+void GameWidget::playBGM() {
+    bgmPlayer->setSource(QUrl(getBackgroudMusic()));
+    if (game->checkGameStatus() > PAUSE)
+        return;
+    bgmPlayer->play();
 }
 
-GameWidget::~GameWidget()
-{
-    destroyTButtons();
-    delete game;
+void GameWidget::stopBGM() {
+    bgmPlayer->stop();
 }
 
-void GameWidget::closeEvent(QCloseEvent* event) {
-    mainQ->show();
-    destroyTButtons();
+void GameWidget::playClkEfe() {
+    effectPlayer->setSource(QUrl(getClickSound()));
+    effectPlayer->play();
+}
+
+void GameWidget::playClrEfe() {
+    effectPlayer->setSource(QUrl(getClearSound()));
+    effectPlayer->play();
+}
+
+void GameWidget::startTimer() {
+    gameTimer->start();
+}
+
+void GameWidget::pauseTimer() {
+    gameTimer->stop();
 }
 
 bool GameWidget::eventFilter(QObject* watched, QEvent* event) {
     if (event->type() == QEvent::Paint) {
-        QPainter painter(ui.centralWidget);
-        QPen pen;
-        QColor color(rand() % 96 + 64, rand() % 96 + 64, rand() % 96 + 64);
-        pen.setColor(color);
-        pen.setWidth(5);
-        painter.setPen(pen);
+        if (game->paintPoints.size() && curLineColor) {
+            QPainter painter(ui.centralWidget);
+            QPen pen;
+            pen.setColor(*curLineColor);
+            pen.setWidth(5);
+            painter.setPen(pen);
 
-        for (int i = 1; i < game->paintPoints.size(); ++i) {
-            Point p1 = game->paintPoints[i - 1];
-            Point p2 = game->paintPoints[i];
+            for (int i = 1; i < game->paintPoints.size(); ++i) {
+                Point p1 = game->paintPoints[i - 1];
+                Point p2 = game->paintPoints[i];
 
-            QPoint pos1(tLeftMargin + p1.first * tIconSize + tIconSize / 2,
-                tTopMargin + p1.second * tIconSize + tIconSize / 2);
-            QPoint pos2(tLeftMargin + p2.first * tIconSize + tIconSize / 2,
-                tTopMargin + p2.second * tIconSize + tIconSize / 2);
+                QPoint pos1(tLeftMargin + p1.first * tIconSize + tIconSize / 2,
+                    tTopMargin + p1.second * tIconSize + tIconSize / 2);
+                QPoint pos2(tLeftMargin + p2.first * tIconSize + tIconSize / 2,
+                    tTopMargin + p2.second * tIconSize + tIconSize / 2);
 
-            painter.drawLine(pos1, pos2);
-            qDebug() << "paint" << QString::number(pos1.x()) << QString::number(pos2.y());;
+                painter.drawLine(pos1, pos2);
+                qDebug() << "paint" << QString::number(pos1.x()) << QString::number(pos2.y());;
+            }
         }
-        game->paintPoints.clear();
         return true;
     }
     else {
         return QMainWindow::eventFilter(watched, event);
     }
+}
+
+void GameWidget::afterLink() {
+    game->checkFrozen();
+    game->paintPoints.clear();
+    preIcon->setStyleSheet(tReleasedStyle);
+    curIcon->setStyleSheet(tReleasedStyle);
+    preIcon->hide();
+    curIcon->hide();
+    preIcon = curIcon = nullptr;
+
+    update(); 
+    if (game->isWin()) {
+        endGame(WIN);
+        ui.showWidget->setStyleSheet("#showWidget{border-image:url("
+            + WIN_PIC
+            + ");}");
+        QMessageBox::information(this, "你赢了", "总分数为" + QString::number(game->getCurScore()));
+    }
+
+    isLinking = false;
+}
+
+void GameWidget::gameTimerEvent() {
+    if(ui.timerBar->value() == 0){
+        gameTimer->stop();
+        //
+    }
+    else{
+        ui.timerBar->setValue(ui.timerBar->value() - gameTimerInterval);
+    }
+    update();
 }
 
 void GameWidget::on_IconButton_Pressed() {
@@ -147,14 +272,18 @@ void GameWidget::on_IconButton_Pressed() {
     
     if (preIcon == nullptr) {
         curIcon->setStyleSheet(tClickedStyle);
+        playClkEfe();
         preIcon = curIcon;
     }
     else {
         if (preIcon != curIcon) {
             curIcon->setStyleSheet(tClickedStyle);
             if (game->linkTwoTiles(preIcon->posID, curIcon->posID)) {
+                if (curLineColor) delete curLineColor;
+                curLineColor = new QColor(rand() % 96 + 64, rand() % 96 + 64, rand() % 96 + 64);
                 update();
                 isLinking = true;
+                playClrEfe();
 
                 QTimer::singleShot(tLinkingTimerDelay, this, SLOT(afterLink()));
             }
@@ -166,6 +295,7 @@ void GameWidget::on_IconButton_Pressed() {
         }
         else {
             curIcon->setStyleSheet(tReleasedStyle);
+            playClkEfe();
             preIcon = nullptr;
         }
     }
@@ -197,69 +327,14 @@ void GameWidget::on_pauseBtn_clicked()
 {
     switch (game->checkGameStatus()) {
     case PLAYING:
-        game->setGameStatus(PAUSE);
-        ui.pauseBtn->setText("继续游戏");
-        ui.levelBtn->setEnabled(true);
-        ui.startBtn->setEnabled(true);
-        ui.shuffleBtn->setEnabled(false);
-        ui.hintBtn->setEnabled(false);
-        disableIconButtons();
+        pauseGame();
         break;
     case PAUSE:
-        game->setGameStatus(PLAYING);
-        ui.pauseBtn->setText("暂停游戏");
-        ui.levelBtn->setEnabled(false);
-        ui.startBtn->setEnabled(false);
-        ui.shuffleBtn->setEnabled(true);
-        ui.hintBtn->setEnabled(true);
-        enableIconButtons();
+        continueGame();
         break;
     default:
         break;
     }
-}
-
-void GameWidget::destroyTButtons() {
-    if (buttonImage) {
-        for (int i = 0; i < levelNum; ++i) {
-            delete buttonImage[i];
-        }
-        delete[] buttonImage;
-    }
-    buttonImage = nullptr;
-}
-
-void GameWidget::releaseTButtons() {
-    if (buttonImage)
-        for (int i = 0; i < levelNum; ++i)
-            buttonImage[i]->setStyleSheet(tDefaultStyle);
-    preIcon = nullptr;
-    curIcon = nullptr;
-    isLinking = false;
-}
-
-void GameWidget::afterLink() {
-    game->checkFrozen();
-    preIcon->setStyleSheet(tReleasedStyle);
-    curIcon->setStyleSheet(tReleasedStyle);
-    preIcon->hide();
-    curIcon->hide();
-    preIcon = curIcon = nullptr;
-
-    update(); 
-    if (game->isWin()) {
-        ui.startBtn->setEnabled(true);
-        ui.pauseBtn->setEnabled(false);
-        ui.hintBtn->setEnabled(false);
-        ui.shuffleBtn->setEnabled(false);
-        ui.showWidget->setStyleSheet("#showWidget{border-image:url("
-            + WIN_PIC
-            + ");}");
-
-        QMessageBox::information(this, "great", "you win");
-    }
-
-    isLinking = false;
 }
 
 void GameWidget::on_shuffleBtn_clicked()
@@ -268,7 +343,7 @@ void GameWidget::on_shuffleBtn_clicked()
         return;
     if (!game->isFrozen())
         // 未发现僵局，则对重排动作执行分数惩罚
-        ;
+        game->punishment(SFL_PUNISH[game->checkGameLevel()]);
     releaseTButtons();
     do {
         game->shuffle();
@@ -295,17 +370,6 @@ void GameWidget::on_levelBtn_clicked()
     delete lsd;
 }
 
-void GameWidget::loadIcons() {
-    QImage iconEle, iconMsk;
-    iconEle.load(getIconElements());
-    iconMsk.load(getIconMasks());
-    
-    iconEle.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-    iconEle.setAlphaChannel(iconMsk);
-
-    tIconMap = QPixmap::fromImage(iconEle);
-}
-
 void GameWidget::on_hintBtn_clicked()
 {
     if (isLinking)
@@ -321,10 +385,12 @@ void GameWidget::on_hintBtn_clicked()
         qDebug() << hintArr[0] << hintArr[1];
         //需要复位逻辑
     }
+    game->punishment(HNT_PUNISH[game->checkGameLevel()]);
 }
 
-void GameWidget::on_pushButton_clicked()
+void GameWidget::on_settingsBtn_clicked()
 {
+    pauseGame();
     GameSettingsDialog* gsd = new GameSettingsDialog(this);
     int ref = gsd->exec();
     if (ref == QDialog::Accepted) {
@@ -335,8 +401,39 @@ void GameWidget::on_pushButton_clicked()
                 + ");}");
             game->adapt();
             loadIcons();
+            playBGM();
             paintTiles();
         }
     }
     delete gsd;
+}
+
+void GameWidget::loadIcons() {
+    QImage iconEle, iconMsk;
+    iconEle.load(getIconElements());
+    iconMsk.load(getIconMasks());
+    
+    iconEle.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    iconEle.setAlphaChannel(iconMsk);
+
+    tIconMap = QPixmap::fromImage(iconEle);
+}
+
+void GameWidget::destroyTButtons() {
+    if (buttonImage) {
+        for (int i = 0; i < levelNum; ++i) {
+            delete buttonImage[i];
+        }
+        delete[] buttonImage;
+    }
+    buttonImage = nullptr;
+}
+
+void GameWidget::releaseTButtons() {
+    if (buttonImage)
+        for (int i = 0; i < levelNum; ++i)
+            buttonImage[i]->setStyleSheet(tDefaultStyle);
+    preIcon = nullptr;
+    curIcon = nullptr;
+    isLinking = false;
 }

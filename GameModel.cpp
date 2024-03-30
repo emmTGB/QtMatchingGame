@@ -42,6 +42,7 @@ void GameModel::startGame() {
 
 	gameStatus = PLAYING;
 	iconSpecies = getIconSpecies();
+	score = 0;
 
 	int iconID = 0;
 	for (int i = 0; i + 1 < tLevelNum; i += 2) {
@@ -131,12 +132,29 @@ int GameModel::getLevelNum() {
 	return tLevelNum;
 }
 
+int GameModel::getCurScore() {
+	return score;
+}
+
 bool GameModel::isExistAt(int i) {
 	return gameMap[i] != -1;
 }
 
 void GameModel::setGameStatus(GameStatus status){
     gameStatus = status;
+}
+
+void GameModel::punishment(int sc) {
+	combo = 0;
+	score -= sc;
+}
+
+void GameModel::settleScore(int remainTime) {
+	if (gameStatus == WIN)
+		score += WIN_BONUS;
+	score += remainTime / 1000 * TIME_RATE;
+	if (score < 0)
+		score = 0;
 }
 
 void GameModel::setGameLevel(GameLevel level) {

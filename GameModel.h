@@ -7,14 +7,19 @@
 const int MAX_COL = 18;
 const int MAX_ROW = 16;
 
+const int WIN_BONUS = 100;
 const int LINK_SCORE = 50;
 const double MAX_RATE = 0.3;
 const double COMBO_RATE = 0.05;
+const double TIME_RATE = 0.05;
+const int SFL_PUNISH[] = { 0, 10, 30 };
+const int HNT_PUNISH[] = { 10, 30, 50 };
+
 
 enum GameStatus {
-	WAITING,
 	PLAYING,
 	PAUSE,
+	WAITING,
 	WIN,
 	OVER
 };
@@ -49,12 +54,16 @@ public:
 	bool isWin();
 	bool isFrozen();
 	bool isExistAt(int i);
+
 	int getIdAt(int i);
 	int* getHint();
 	int getLevelNum();
+	int getCurScore();
 
 	void setGameLevel(GameLevel level);
     void setGameStatus(GameStatus status);
+	void punishment(int sc);
+	void settleScore(int remainTime);
 
 	void shuffle();
 

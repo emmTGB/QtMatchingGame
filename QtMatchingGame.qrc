@@ -13,5 +13,14 @@
         <file>res/mh_element.bmp</file>
         <file>res/mh_mask.bmp</file>
         <file>res/game_win.png</file>
+        <file>res/cxk_clear.wav</file>
+        <file>res/cxk_click.wav</file>
+        <file>res/fruit_clear.wav</file>
+        <file>res/fruit_click.wav</file>
+        <file>res/mh_clear.wav</file>
+        <file>res/mh_click.wav</file>
+        <file>res/cxk_bgm.mp3</file>
+        <file>res/mh_bgm.mp3</file>
+        <file>res/fruit_bgm.mp3</file>
     </qresource>
 </RCC>

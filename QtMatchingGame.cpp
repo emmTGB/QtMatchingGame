@@ -16,6 +16,10 @@ QtMatchingGame::~QtMatchingGame()
 {
 }
 
+GameRecord& QtMatchingGame::getConnect() {
+    return gRecord;
+}
+
 void QtMatchingGame::on_pushBasicMode_clicked()
 {
     this->close();

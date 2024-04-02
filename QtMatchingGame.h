@@ -5,6 +5,7 @@
 #include <qmediaplayer.h>
 
 #include "GameTheme.h"
+#include "GameRecord.h"
 
 class QtMatchingGame : public QMainWindow
 {
@@ -14,11 +15,14 @@ public:
     QtMatchingGame(QWidget *parent = nullptr);
     ~QtMatchingGame();
 
+    GameRecord& getConnect();
+
 private slots:
     void on_pushBasicMode_clicked();
 
     void on_pushEntertainMode_clicked();
 
 private:
+    GameRecord gRecord;
     Ui::QtMatchingGameClass ui;
 };

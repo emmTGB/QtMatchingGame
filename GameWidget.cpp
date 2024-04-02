@@ -1,6 +1,7 @@
 ﻿#include "gamewidget.h"
 #include "LevelSelectDialog.h"
 #include "GameSettingsDialog.h"
+#include "GameWinDialog.h"
 
 #include <QPainter>
 #include<qtimer.h>
@@ -202,6 +203,37 @@ void GameWidget::pauseTimer() {
     gameTimer->stop();
 }
 
+void GameWidget::buttonBling(QPushButton* button, const QString& hoverStyle) {
+    QLabel* blingLabel = new QLabel(this);
+    blingLabel->setText("");
+    blingLabel->setGeometry(button->geometry());
+    blingLabel->setStyleSheet(hoverStyle);
+    blingLabel->show();
+
+    QGraphicsOpacityEffect* effect = new QGraphicsOpacityEffect(blingLabel);
+    effect->setOpacity(1);
+    blingLabel->setGraphicsEffect(effect);
+
+    QPropertyAnimation* animation = new QPropertyAnimation(effect, "opacity");
+    animation->setEasingCurve(QEasingCurve::Linear);
+    animation->setDuration(800);
+    animation->setLoopCount(2);
+
+    QObject::connect(animation, &QPropertyAnimation::start, [&]() {
+
+        });
+    QObject::connect(animation, &QPropertyAnimation::finished, [=]() {
+            blingLabel->hide();
+            delete blingLabel;
+        });
+
+    animation->setKeyValueAt(0, 0);
+    animation->setKeyValueAt(0.5, 0.8);
+    animation->setKeyValueAt(1, 0);
+
+    animation->start(QAbstractAnimation::KeepWhenStopped);
+}
+
 bool GameWidget::eventFilter(QObject* watched, QEvent* event) {
     if (event->type() == QEvent::Paint) {
         if (game->paintPoints.size() && curLineColor) {
@@ -221,7 +253,6 @@ bool GameWidget::eventFilter(QObject* watched, QEvent* event) {
                     tTopMargin + p2.second * tIconSize + tIconSize / 2);
 
                 painter.drawLine(pos1, pos2);
-                qDebug() << "paint" << QString::number(pos1.x()) << QString::number(pos2.y());;
             }
         }
         return true;
@@ -243,12 +274,25 @@ void GameWidget::afterLink() {
     update(); 
     if (game->isWin()) {
         endGame(WIN);
+        
+        //
         ui.showWidget->setStyleSheet("#showWidget{border-image:url("
             + WIN_PIC
             + ");}");
         QMessageBox::information(this, "你赢了", "总分数为" + QString::number(game->getCurScore()));
     }
 
+    GameWinDialog* gwd = new GameWinDialog(this);
+    gwd->setScores(game->getCurScore()); // 
+    int ref = gwd->exec();
+    if (ref == QDialog::Accepted) {
+        mainQ->getConnect().insertRecord(
+            gwd->getWinnerName(),
+            game->getCurScore(),
+            QDateTime::currentDateTime()
+        );
+    }
+    delete gwd;
     isLinking = false;
 }
 
@@ -378,12 +422,11 @@ void GameWidget::on_hintBtn_clicked()
     if (hintArr == nullptr) {
         // TODO：未发现提示，想一种醒目的提示方法
         // 暂定为按钮闪烁
+        buttonBling(ui.shuffleBtn, sBtnHoverStyle);
     }
     else {
-        buttonImage[hintArr[0]]->setStyleSheet(tHintStyle);
-        buttonImage[hintArr[1]]->setStyleSheet(tHintStyle);
-        qDebug() << hintArr[0] << hintArr[1];
-        //需要复位逻辑
+        buttonBling(buttonImage[hintArr[0]], tBtnHoverStyle);
+        buttonBling(buttonImage[hintArr[1]], tBtnHoverStyle);
     }
     game->punishment(HNT_PUNISH[game->checkGameLevel()]);
 }

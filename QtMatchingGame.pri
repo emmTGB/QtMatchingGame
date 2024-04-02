@@ -10,25 +10,30 @@ message("You are running qmake on a generated .pro file. This may not work!")
 HEADERS += ./BasicModeGame.h \
     ./EntertainModeGame.h \
     ./GameModel.h \
+    ./GameRecord.h \
     ./GameTheme.h \
     ./Global.h \
     ./QtMatchingGame.h \
     ./GameSettingsDialog.h \
     ./LevelSelectDialog.h \
     ./GameWidget.h \
-    ./IconButton.h
+    ./IconButton.h \
+    ./GameWinDialog.h
 SOURCES += ./BasicModeGame.cpp \
     ./EntertainModeGame.cpp \
     ./GameModel.cpp \
+    ./GameRecord.cpp \
     ./GameSettingsDialog.cpp \
     ./GameTheme.cpp \
     ./GameWidget.cpp \
     ./IconButton.cpp \
     ./LevelSelectDialog.cpp \
     ./QtMatchingGame.cpp \
-    ./main.cpp
+    ./main.cpp \
+    ./GameWinDialog.cpp
 FORMS += ./GameSettingsDialog.ui \
     ./GameWidget.ui \
     ./LevelSelectDialog.ui \
-    ./QtMatchingGame.ui
+    ./QtMatchingGame.ui \
+    ./GameWinDialog.ui
 RESOURCES += QtMatchingGame.qrc

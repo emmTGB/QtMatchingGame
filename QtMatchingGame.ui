@@ -69,6 +69,19 @@
      <string>关卡模式</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="settingBtn">
+    <property name="geometry">
+     <rect>
+      <x>690</x>
+      <y>520</y>
+      <width>80</width>
+      <height>60</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>设置</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

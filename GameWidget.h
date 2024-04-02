@@ -8,6 +8,9 @@
 #include "GameModel.h"
 #include <QCloseEvent>
 #include <QAudioOutput>
+#include <QLabel>
+#include <QPropertyAnimation>
+#include <QGraphicsOpacityEffect>
 
 const int tIconSize = 40;
 const int tTopMargin = 70;
@@ -17,6 +20,9 @@ const QString tDefaultStyle = "background: transparent";
 const QString tReleasedStyle = tDefaultStyle + "; ";
 const QString tClickedStyle = tDefaultStyle + ";background-color: rgba(255, 255, 12, 161);border-width: 2px;border-color: rgb(255, 32, 64);";
 const QString tHintStyle = tDefaultStyle + "; background-color: rgba(128, 0, 255, 96);";
+
+const QString sBtnHoverStyle = "background-color: rgb(255, 205, 66);border-radius: 4px; ";
+const QString tBtnHoverStyle = "background-color: rgb(54, 76, 226)";
 
 const int tLinkingTimerDelay = 700;
 
@@ -60,6 +66,8 @@ protected:
 
     void startTimer();
     void pauseTimer();
+
+    void buttonBling(QPushButton* button, const QString& hoverStyle);
 
     Ui::GameWidgetClass ui;
 

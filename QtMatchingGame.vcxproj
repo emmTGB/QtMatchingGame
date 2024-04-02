@@ -38,7 +38,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.6.2_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets;multimedia</QtModules>
+    <QtModules>core;gui;widgets;multimedia;sql</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -97,15 +97,18 @@
     <QtRcc Include="QtMatchingGame.qrc" />
     <QtUic Include="GameSettingsDialog.ui" />
     <QtUic Include="GameWidget.ui" />
+    <QtUic Include="GameWinDialog.ui" />
     <QtUic Include="LevelSelectDialog.ui" />
     <QtUic Include="QtMatchingGame.ui" />
     <QtMoc Include="QtMatchingGame.h" />
     <ClCompile Include="BasicModeGame.cpp" />
     <ClCompile Include="EntertainModeGame.cpp" />
     <ClCompile Include="GameModel.cpp" />
+    <ClCompile Include="GameRecord.cpp" />
     <ClCompile Include="GameSettingsDialog.cpp" />
     <ClCompile Include="GameTheme.cpp" />
     <ClCompile Include="GameWidget.cpp" />
+    <ClCompile Include="GameWinDialog.cpp" />
     <ClCompile Include="IconButton.cpp" />
     <ClCompile Include="LevelSelectDialog.cpp" />
     <ClCompile Include="QtMatchingGame.cpp" />
@@ -116,7 +119,9 @@
     <ClInclude Include="EntertainModeGame.h" />
     <ClInclude Include="GameModel.h" />
     <QtMoc Include="GameSettingsDialog.h" />
+    <ClInclude Include="GameRecord.h" />
     <ClInclude Include="GameTheme.h" />
+    <QtMoc Include="GameWinDialog.h" />
     <ClInclude Include="Global.h" />
     <QtMoc Include="LevelSelectDialog.h" />
     <QtMoc Include="GameWidget.h" />

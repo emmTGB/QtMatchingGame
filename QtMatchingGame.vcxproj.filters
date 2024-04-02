@@ -64,6 +64,12 @@
     <ClCompile Include="GameSettingsDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameRecord.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWinDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="IconButton.h">
@@ -78,6 +84,9 @@
     <QtMoc Include="GameSettingsDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="GameWinDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="GameWidget.ui">
@@ -87,6 +96,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="GameSettingsDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="GameWinDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
@@ -104,6 +116,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameTheme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRecord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

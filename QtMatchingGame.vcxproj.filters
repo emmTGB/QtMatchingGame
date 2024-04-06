@@ -70,6 +70,9 @@
     <ClCompile Include="GameWinDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameRankDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="IconButton.h">
@@ -87,6 +90,9 @@
     <QtMoc Include="GameWinDialog.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="GameRankDialog.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="GameWidget.ui">
@@ -99,6 +105,9 @@
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="GameWinDialog.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="GameRankDialog.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

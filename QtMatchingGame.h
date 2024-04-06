@@ -22,6 +22,10 @@ private slots:
 
     void on_pushEntertainMode_clicked();
 
+    void on_rankBtn_clicked();
+
+    void on_helpBtn_clicked();
+
 private:
     GameRecord gRecord;
     Ui::QtMatchingGameClass ui;

@@ -76,6 +76,8 @@ protected slots:
     void afterLink();
     void gameTimerEvent();
 
+    virtual void on_diyButton_1_clicked();
+
 public:
     explicit GameWidget(QWidget *parent = nullptr, QtMatchingGame* mainQ = nullptr, GameMode mode = BASIC);
     ~GameWidget();

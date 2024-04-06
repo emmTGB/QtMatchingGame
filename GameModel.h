@@ -15,7 +15,6 @@ const double TIME_RATE = 0.05;
 const int SFL_PUNISH[] = { 0, 10, 30 };
 const int HNT_PUNISH[] = { 10, 30, 50 };
 
-
 enum GameStatus {
 	PLAYING,
 	PAUSE,
@@ -49,6 +48,7 @@ public:
 	void startGame();
 	GameStatus checkGameStatus();
 	GameLevel checkGameLevel();
+	GameMode checkGameMode();
 	bool linkTwoTiles(Point& src, Point& dst);
 	bool checkFrozen();
 	bool isWin();

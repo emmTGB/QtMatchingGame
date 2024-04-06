@@ -7,9 +7,8 @@
 #include<qtimer.h>
 #include <QMessageBox>
 
-GameWidget::GameWidget(QWidget *parent, QtMatchingGame* mainQ, GameMode mode)
-    : QMainWindow(parent), mainQ(mainQ)
-{
+GameWidget::GameWidget(QWidget* parent, QtMatchingGame* mainQ, GameMode mode)
+    : QMainWindow(parent), mainQ(mainQ) {
     ui.setupUi(this);
     ui.centralWidget->installEventFilter(this);
     ui.centralWidget->setStyleSheet("#centralWidget{border-image: url("
@@ -32,12 +31,14 @@ GameWidget::GameWidget(QWidget *parent, QtMatchingGame* mainQ, GameMode mode)
     ui.levelBtn->setEnabled(true);
     ui.diyButton_1->setEnabled(false);
 
+    ui.scoreLbl->setText("0");
+
     ui.timerBar->setMaximum(gameTimerTotal);
     ui.timerBar->setMinimum(0);
     ui.timerBar->setValue(gameTimerTotal);
 
     bgmOutput = new QAudioOutput(this);
-    bgmOutput->setVolume(0.15); 
+    bgmOutput->setVolume(0.15);
     effectOutput = new QAudioOutput(this);
     effectOutput->setVolume(0.5);
 
@@ -274,32 +275,34 @@ void GameWidget::afterLink() {
     update(); 
     if (game->isWin()) {
         endGame(WIN);
-        
+
+        GameWinDialog* gwd = new GameWinDialog(this);
+        gwd->setScores(game->getCurScore(),
+            mainQ->getConnect().getFirstRecord(game->checkGameMode())->score); // 
+        int ref = gwd->exec();
+        if (ref == QDialog::Accepted) {
+            mainQ->getConnect().insertRecord(
+                gwd->getWinnerName(),
+                game->getCurScore(),
+                QDateTime::currentDateTime(),
+                game->checkGameMode()
+            );
+        }
+        delete gwd;
         //
         ui.showWidget->setStyleSheet("#showWidget{border-image:url("
             + WIN_PIC
             + ");}");
-        QMessageBox::information(this, "你赢了", "总分数为" + QString::number(game->getCurScore()));
     }
 
-    GameWinDialog* gwd = new GameWinDialog(this);
-    gwd->setScores(game->getCurScore()); // 
-    int ref = gwd->exec();
-    if (ref == QDialog::Accepted) {
-        mainQ->getConnect().insertRecord(
-            gwd->getWinnerName(),
-            game->getCurScore(),
-            QDateTime::currentDateTime()
-        );
-    }
-    delete gwd;
     isLinking = false;
 }
 
 void GameWidget::gameTimerEvent() {
-    if(ui.timerBar->value() == 0){
+    if(ui.timerBar->value() <= 0){
         gameTimer->stop();
         //
+        endGame(OVER);
     }
     else{
         ui.timerBar->setValue(ui.timerBar->value() - gameTimerInterval);
@@ -480,3 +483,9 @@ void GameWidget::releaseTButtons() {
     curIcon = nullptr;
     isLinking = false;
 }
+
+void GameWidget::on_diyButton_1_clicked()
+{
+    return;
+}
+

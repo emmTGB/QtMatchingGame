@@ -65,6 +65,10 @@ GameLevel GameModel::checkGameLevel() {
 	return gameLevel;
 }
 
+GameMode GameModel::checkGameMode() {
+	return gameMode;
+}
+
 bool GameModel::linkTwoTiles(Point& src, Point& dst) {
 	if (isCanLink(src, dst)) {
 		gameMap[colNum * src.second + src.first] = -1;

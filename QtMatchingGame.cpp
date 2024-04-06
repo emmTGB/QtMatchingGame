@@ -35,3 +35,15 @@ void QtMatchingGame::on_pushEntertainMode_clicked()
     emg->show();
 }
 
+
+void QtMatchingGame::on_rankBtn_clicked()
+{
+
+}
+
+
+void QtMatchingGame::on_helpBtn_clicked()
+{
+
+}
+

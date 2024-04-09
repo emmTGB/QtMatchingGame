@@ -95,6 +95,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <QtRcc Include="QtMatchingGame.qrc" />
+    <QtUic Include="GameHelpDialog.ui" />
     <QtUic Include="GameRankDialog.ui" />
     <QtUic Include="GameSettingsDialog.ui" />
     <QtUic Include="GameWidget.ui" />
@@ -104,6 +105,7 @@
     <QtMoc Include="QtMatchingGame.h" />
     <ClCompile Include="BasicModeGame.cpp" />
     <ClCompile Include="EntertainModeGame.cpp" />
+    <ClCompile Include="GameHelpDialog.cpp" />
     <ClCompile Include="GameModel.cpp" />
     <ClCompile Include="GameRankDialog.cpp" />
     <ClCompile Include="GameRecord.cpp" />
@@ -119,6 +121,7 @@
   <ItemGroup>
     <ClInclude Include="BasicModeGame.h" />
     <ClInclude Include="EntertainModeGame.h" />
+    <QtMoc Include="GameHelpDialog.h" />
     <ClInclude Include="GameModel.h" />
     <QtMoc Include="GameSettingsDialog.h" />
     <QtMoc Include="GameRankDialog.h" />
@@ -129,6 +132,9 @@
     <QtMoc Include="LevelSelectDialog.h" />
     <QtMoc Include="GameWidget.h" />
     <QtMoc Include="IconButton.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

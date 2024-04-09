@@ -15,7 +15,7 @@ public:
     QtMatchingGame(QWidget *parent = nullptr);
     ~QtMatchingGame();
 
-    GameRecord& getConnect();
+    GameRecord* getConnect();
 
 private slots:
     void on_pushBasicMode_clicked();
@@ -25,6 +25,8 @@ private slots:
     void on_rankBtn_clicked();
 
     void on_helpBtn_clicked();
+
+    void on_settingBtn_clicked();
 
 private:
     GameRecord gRecord;

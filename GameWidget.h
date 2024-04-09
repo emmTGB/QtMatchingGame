@@ -1,4 +1,4 @@
-#ifndef GAMEWIDGET_H
+﻿#ifndef GAMEWIDGET_H
 #define GAMEWIDGET_H
 
 #include <QtWidgets\QMainWindow>
@@ -26,7 +26,6 @@ const QString tBtnHoverStyle = "background-color: rgb(54, 76, 226)";
 
 const int tLinkingTimerDelay = 700;
 
-const int gameTimerTotal = 5 * 60 * 1000;
 const int gameTimerInterval = 300;
 
 class GameWidget : public QMainWindow
@@ -37,6 +36,7 @@ protected:
     QtMatchingGame* mainQ;
 
     int levelNum = -1;
+    int gameTimerTotal = 5 * 60 * 1000;
 
     GameModel* game;
     IconButton** buttonImage;
@@ -49,9 +49,9 @@ protected:
     QMediaPlayer* audioPlayer;
 
     virtual void initGame();
-    void pauseGame();
-    void continueGame();
-    void endGame(GameStatus status);
+    virtual void changeGameStatus(GameStatus status);
+    virtual void gameWin();
+    virtual void gameOver();
 
     void paintTiles();
     void enableIconButtons();
@@ -72,11 +72,16 @@ protected:
     Ui::GameWidgetClass ui;
 
 protected slots:
-    void on_IconButton_Pressed();
+    virtual void on_IconButton_Pressed();
+    
     void afterLink();
+
     void gameTimerEvent();
 
     virtual void on_diyButton_1_clicked();
+    virtual void botLink();
+
+    void on_shuffleBtn_clicked();
 
 public:
     explicit GameWidget(QWidget *parent = nullptr, QtMatchingGame* mainQ = nullptr, GameMode mode = BASIC);
@@ -89,13 +94,13 @@ private slots:
 
     void on_pauseBtn_clicked();
 
-    void on_shuffleBtn_clicked();
-
     void on_levelBtn_clicked();
 
     void on_hintBtn_clicked();
 
     void on_settingsBtn_clicked();
+
+    void on_helpBtn_clicked();
 
 private:
     QPixmap tIconMap;

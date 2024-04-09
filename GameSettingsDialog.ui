@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>GameSettingsDialog</string>
+   <string>游戏设置</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" columnstretch="4,2,1,1,2,4">
    <property name="leftMargin">

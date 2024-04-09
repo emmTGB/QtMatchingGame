@@ -15,25 +15,31 @@ HEADERS += ./BasicModeGame.h \
     ./Global.h \
     ./QtMatchingGame.h \
     ./GameSettingsDialog.h \
+    ./GameRankDialog.h \
+    ./GameWinDialog.h \
     ./LevelSelectDialog.h \
     ./GameWidget.h \
     ./IconButton.h \
-    ./GameWinDialog.h
+    ./GameHelpDialog.h
 SOURCES += ./BasicModeGame.cpp \
     ./EntertainModeGame.cpp \
     ./GameModel.cpp \
+    ./GameRankDialog.cpp \
     ./GameRecord.cpp \
     ./GameSettingsDialog.cpp \
     ./GameTheme.cpp \
     ./GameWidget.cpp \
+    ./GameWinDialog.cpp \
     ./IconButton.cpp \
     ./LevelSelectDialog.cpp \
     ./QtMatchingGame.cpp \
     ./main.cpp \
-    ./GameWinDialog.cpp
-FORMS += ./GameSettingsDialog.ui \
+    ./GameHelpDialog.cpp
+FORMS += ./GameRankDialog.ui \
+    ./GameSettingsDialog.ui \
     ./GameWidget.ui \
+    ./GameWinDialog.ui \
     ./LevelSelectDialog.ui \
     ./QtMatchingGame.ui \
-    ./GameWinDialog.ui
+    ./GameHelpDialog.ui
 RESOURCES += QtMatchingGame.qrc

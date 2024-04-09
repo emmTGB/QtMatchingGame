@@ -320,7 +320,7 @@ background: transparent ;
     <item row="10" column="2">
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="helpBtn">
         <property name="minimumSize">
          <size>
           <width>60</width>

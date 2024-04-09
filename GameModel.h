@@ -50,6 +50,7 @@ public:
 	GameLevel checkGameLevel();
 	GameMode checkGameMode();
 	bool linkTwoTiles(Point& src, Point& dst);
+	bool linkTwoTiles(int _src, int _dst);
 	bool checkFrozen();
 	bool isWin();
 	bool isFrozen();

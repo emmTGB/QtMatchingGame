@@ -15,7 +15,6 @@ public:
 	void setScores(int cur, int high = -1);
 
 private:
-	int curScore, highScore;
 
 	Ui::GameWinDialogClass ui;
 };

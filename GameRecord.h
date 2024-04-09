@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QWidget>
 #include <QDateTime>
@@ -32,16 +32,16 @@ public:
 
 	void insertRecord(const QString& _id, int _score, QDateTime _recordTime, GameMode _gameMode);
 	void insertRecord(Record* record);
-	Record** getFrontRecords(GameMode gameMode);
+	std::vector<Record*>* getFrontRecords(GameMode gameMode);
 	Record* getFirstRecord(GameMode gameMode);
 
 private:
 	void __insertDB(Record* record);
-	Record** __getFrontDB(GameMode gameMode);
+	std::vector<Record*>* __getFrontDB(GameMode gameMode);
 	Record* __getFirstDB(GameMode gameMode);
 
 	bool sqlUsable = true;
 	QSqlDatabase dbConn;
-	QSqlQuery* qry;
+	QSqlQuery qry;
 };
 

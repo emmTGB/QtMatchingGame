@@ -82,6 +82,12 @@ bool GameModel::linkTwoTiles(Point& src, Point& dst) {
 	return false;
 }
 
+bool GameModel::linkTwoTiles(int _src, int _dst) {
+	Point src = std::make_pair(_src % colNum, _src / colNum);
+	Point dst = std::make_pair(_dst % colNum, _dst / colNum);
+	return linkTwoTiles(src, dst);
+}
+
 bool GameModel::checkFrozen() {
 	bool ret = __checkFrozen();
 	paintPoints.clear();
@@ -119,6 +125,7 @@ bool GameModel::isFrozen() {
 }
 
 int* GameModel::getHint() {
+	combo = 0;
 	if (hintArr) {
 		return new int[2] {hintArr[0].first + colNum * hintArr[0].second,
 			hintArr[1].first + colNum * hintArr[1].second};
@@ -180,6 +187,7 @@ bool GameModel::isCanLink(Point& src, Point& dst) {
 	if (canLinkWithTwoCorner(src, dst))
 		return true;
 
+	paintPoints.clear();
 	return false;
 }
 

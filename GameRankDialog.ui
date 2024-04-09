@@ -25,11 +25,11 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QTableView" name="tableView"/>
+        <widget class="QTableView" name="tableView_1"/>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="enterTab">
       <attribute name="title">
        <string>娱乐模式</string>
       </attribute>
@@ -39,7 +39,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3">
+     <widget class="QWidget" name="stageTab">
       <attribute name="title">
        <string>关卡模式</string>
       </attribute>

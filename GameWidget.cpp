@@ -2,6 +2,7 @@
 #include "LevelSelectDialog.h"
 #include "GameSettingsDialog.h"
 #include "GameWinDialog.h"
+#include "GameHelpDialog.h"
 
 #include <QPainter>
 #include<qtimer.h>
@@ -24,11 +25,6 @@ GameWidget::GameWidget(QWidget* parent, QtMatchingGame* mainQ, GameMode mode)
     isLinking = false;
     enableTimer = true;
 
-    ui.startBtn->setEnabled(true);
-    ui.pauseBtn->setEnabled(false);
-    ui.hintBtn->setEnabled(false);
-    ui.shuffleBtn->setEnabled(false);
-    ui.levelBtn->setEnabled(true);
     ui.diyButton_1->setEnabled(false);
 
     ui.scoreLbl->setText("0");
@@ -55,6 +51,7 @@ GameWidget::GameWidget(QWidget* parent, QtMatchingGame* mainQ, GameMode mode)
     connect(gameTimer, SIGNAL(timeout()), this, SLOT(gameTimerEvent()));
 
     loadIcons();
+    changeGameStatus(WAITING);
 
     setAttribute(Qt::WA_DeleteOnClose, true);
 }
@@ -97,53 +94,7 @@ void GameWidget::initGame() {
     isLinking = false;
 }
 
-void GameWidget::pauseGame() {
-    if (game->checkGameStatus() > PAUSE)
-        return;
-    game->setGameStatus(PAUSE);
-    ui.pauseBtn->setText("继续游戏");
-    ui.levelBtn->setEnabled(true);
-    ui.startBtn->setEnabled(true);
-    ui.shuffleBtn->setEnabled(false);
-    ui.hintBtn->setEnabled(false);
-    disableIconButtons();
-    if (enableTimer)
-        pauseTimer();
-}
-
-void GameWidget::continueGame() {
-    game->setGameStatus(PLAYING);
-    ui.pauseBtn->setText("暂停游戏");
-    ui.levelBtn->setEnabled(false);
-    ui.startBtn->setEnabled(false);
-    ui.shuffleBtn->setEnabled(true);
-    ui.hintBtn->setEnabled(true);
-    enableIconButtons();
-    if (enableTimer)
-        startTimer();
-}
-
-void GameWidget::endGame(GameStatus status) {
-    game->setGameStatus(status);
-    ui.startBtn->setEnabled(true);
-    ui.pauseBtn->setEnabled(false);
-    ui.hintBtn->setEnabled(false);
-    ui.shuffleBtn->setEnabled(false);
-    disableIconButtons();
-    stopBGM();
-    if (enableTimer)
-        pauseTimer();
-
-    game->settleScore(ui.timerBar->value());
-}
-
 void GameWidget::paintTiles() {
-    /*QPixmap tIconMap;
-    if (!tIconMap.load(":/QtMatchingGame/res/fruit_element.bmp"))
-        return;*//*
-    int pWidth = tIconMap.width();
-    int pHeight = tIconMap.height();*/
-
     for (int i = 0; i < levelNum; ++i) {
         buttonImage[i]->setGeometry(tLeftMargin + (i % game->colNum) * tIconSize, tTopMargin + (i / game->colNum) * tIconSize, tIconSize, tIconSize);
         buttonImage[i]->setPos(i % game->colNum, i / game->colNum);
@@ -173,6 +124,101 @@ void GameWidget::enableIconButtons() {
 void GameWidget::disableIconButtons() {
     for (int i = 0; i < levelNum; ++i)
         buttonImage[i]->setEnabled(false);
+}
+
+void GameWidget::gameWin() {
+    GameWinDialog* gwd = new GameWinDialog(this);
+    gwd->setScores(game->getCurScore(),
+        mainQ->getConnect()->getFirstRecord(game->checkGameMode())->score); // 
+    int ref = gwd->exec();
+    if (ref == QDialog::Accepted) {
+        mainQ->getConnect()->insertRecord(
+            gwd->getWinnerName(),
+            game->getCurScore(),
+            QDateTime::currentDateTime(),
+            game->checkGameMode()
+        );
+    }
+    delete gwd;
+    //
+    ui.showWidget->setStyleSheet("#showWidget{border-image:url("
+        + WIN_PIC
+        + ");}");
+}
+
+void GameWidget::changeGameStatus(GameStatus status) {
+    game->setGameStatus(status);
+    if (status > WAITING)
+        game->settleScore(ui.timerBar->value());
+    // 开始按钮
+    if(status == WAITING)
+        ui.startBtn->setText("开始游戏");
+    else
+        ui.startBtn->setText("重新开始");
+    if (status > PLAYING) {
+        ui.startBtn->setEnabled(true);
+    }
+    else {
+        ui.startBtn->setEnabled(false);
+    }
+    // 暂停按钮
+    if (status > PAUSE) {
+        ui.pauseBtn->setEnabled(false);
+    }
+    else {
+        ui.pauseBtn->setEnabled(true);
+    }
+    if (status > PLAYING) {
+        ui.pauseBtn->setText("继续游戏");
+    }
+    else {
+        ui.pauseBtn->setText("暂停游戏");
+    }
+    // 提示按钮
+    if (status > PLAYING) {
+        ui.hintBtn->setEnabled(false);
+    }
+    else {
+        ui.hintBtn->setEnabled(true);
+    }
+    // 重排按钮
+    if (status > PAUSE) {
+        ui.shuffleBtn->setEnabled(false);
+    }
+    else {
+        ui.shuffleBtn->setEnabled(true);
+    }
+    // 难度按钮
+    if (status > PLAYING) {
+        ui.levelBtn->setEnabled(true);
+    }
+    else {
+        ui.levelBtn->setEnabled(false);
+    }
+    // BGM
+    if (status > PAUSE) {
+        stopBGM();
+    }
+    // iconBtn
+    if (status > PLAYING) {
+        disableIconButtons();
+    }
+    else {
+        enableIconButtons();
+    }
+    //timerBar
+    if (enableTimer) {
+        if (status > PLAYING) {
+            pauseTimer();
+        }
+        else {
+            startTimer();
+        }
+    }
+}
+
+void GameWidget::gameOver() {
+    QMessageBox::information(this, "GameOver", "很遗憾，您没能完成");
 }
 
 void GameWidget::playBGM() {
@@ -220,9 +266,6 @@ void GameWidget::buttonBling(QPushButton* button, const QString& hoverStyle) {
     animation->setDuration(800);
     animation->setLoopCount(2);
 
-    QObject::connect(animation, &QPropertyAnimation::start, [&]() {
-
-        });
     QObject::connect(animation, &QPropertyAnimation::finished, [=]() {
             blingLabel->hide();
             delete blingLabel;
@@ -266,33 +309,22 @@ bool GameWidget::eventFilter(QObject* watched, QEvent* event) {
 void GameWidget::afterLink() {
     game->checkFrozen();
     game->paintPoints.clear();
-    preIcon->setStyleSheet(tReleasedStyle);
-    curIcon->setStyleSheet(tReleasedStyle);
-    preIcon->hide();
-    curIcon->hide();
+    if (preIcon) {
+        preIcon->setStyleSheet(tReleasedStyle);
+        preIcon->hide();
+    }
+    if(curIcon){
+        curIcon->setStyleSheet(tReleasedStyle);
+        curIcon->hide();
+    }
     preIcon = curIcon = nullptr;
 
     update(); 
-    if (game->isWin()) {
-        endGame(WIN);
+    ui.scoreLbl->setText(QString::number(game->getCurScore()));
 
-        GameWinDialog* gwd = new GameWinDialog(this);
-        gwd->setScores(game->getCurScore(),
-            mainQ->getConnect().getFirstRecord(game->checkGameMode())->score); // 
-        int ref = gwd->exec();
-        if (ref == QDialog::Accepted) {
-            mainQ->getConnect().insertRecord(
-                gwd->getWinnerName(),
-                game->getCurScore(),
-                QDateTime::currentDateTime(),
-                game->checkGameMode()
-            );
-        }
-        delete gwd;
-        //
-        ui.showWidget->setStyleSheet("#showWidget{border-image:url("
-            + WIN_PIC
-            + ");}");
+    if (game->isWin()) {
+        changeGameStatus(WIN);
+        gameWin();
     }
 
     isLinking = false;
@@ -302,7 +334,8 @@ void GameWidget::gameTimerEvent() {
     if(ui.timerBar->value() <= 0){
         gameTimer->stop();
         //
-        endGame(OVER);
+        changeGameStatus(OVER);
+        gameOver();
     }
     else{
         ui.timerBar->setValue(ui.timerBar->value() - gameTimerInterval);
@@ -350,21 +383,13 @@ void GameWidget::on_IconButton_Pressed() {
 
 void GameWidget::on_startBtn_clicked()
 {
-    if(game->checkGameStatus() == WAITING){
-        initGame();
-        ui.startBtn->setEnabled(false);
-        ui.startBtn->setText("重新开始");
-    }else{
+    if (game->checkGameStatus() != WAITING){
         // 需要摧毁当前按钮数组
         destroyTButtons();
-        ui.pauseBtn->setText("暂停游戏");
-        initGame();
-        ui.startBtn->setEnabled(false);
     }
-    ui.levelBtn->setEnabled(false);
-    ui.pauseBtn->setEnabled(true);
-    ui.shuffleBtn->setEnabled(true);
-    ui.hintBtn->setEnabled(true);
+    initGame();
+
+    changeGameStatus(PLAYING);
     ui.showWidget->setStyleSheet("");
 
     enableIconButtons();
@@ -374,14 +399,18 @@ void GameWidget::on_pauseBtn_clicked()
 {
     switch (game->checkGameStatus()) {
     case PLAYING:
-        pauseGame();
+        changeGameStatus(PAUSE);
         break;
     case PAUSE:
-        continueGame();
+        changeGameStatus(PLAYING);
         break;
     default:
         break;
     }
+}
+
+void GameWidget::botLink() {
+    return;
 }
 
 void GameWidget::on_shuffleBtn_clicked()
@@ -436,7 +465,7 @@ void GameWidget::on_hintBtn_clicked()
 
 void GameWidget::on_settingsBtn_clicked()
 {
-    pauseGame();
+    changeGameStatus(PAUSE);
     GameSettingsDialog* gsd = new GameSettingsDialog(this);
     int ref = gsd->exec();
     if (ref == QDialog::Accepted) {
@@ -487,5 +516,12 @@ void GameWidget::releaseTButtons() {
 void GameWidget::on_diyButton_1_clicked()
 {
     return;
+}
+
+
+void GameWidget::on_helpBtn_clicked()
+{
+    GameHelpDialog ghd = new GameHelpDialog(this);
+    ghd.exec();
 }
 
